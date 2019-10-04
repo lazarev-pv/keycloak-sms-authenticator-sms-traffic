@@ -12,19 +12,19 @@ import org.jboss.security.vault.SecurityVaultUtil;
  */
 public class EnvSubstitutor {
 
-    public static final String VAULT_PREFIX="VAULT::";
+    private static final String VAULT_PREFIX="VAULT::";
 
     public static final StrSubstitutor envSubstitutor = new StrSubstitutor(new EnvLookUp());
-    private static Logger logger = Logger.getLogger(EnvSubstitutor.class);
+    private static final Logger logger = Logger.getLogger(EnvSubstitutor.class);
     private static class EnvLookUp extends StrLookup {
 
         @Override
-        public String lookup(String key) {
+        public String lookup(final String key) {
             String value;
-            if(key.indexOf(VAULT_PREFIX) > -1){
+            if(key.contains(VAULT_PREFIX)){
                 try {
                     value = SecurityVaultUtil.getValueAsString(key);
-                } catch (SecurityVaultException e) {
+                } catch (final SecurityVaultException e) {
                     logger.debug(key + "not present in Vault");
                     value=null;
                 }

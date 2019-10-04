@@ -12,32 +12,38 @@ import org.keycloak.models.KeycloakSessionFactory;
  * Created by nickpack on 15/08/2017.
  */
 public class KeycloakSmsMobilenumberRequiredActionFactory implements RequiredActionFactory {
-    private static Logger logger = Logger.getLogger(KeycloakSmsMobilenumberRequiredActionFactory.class);
+    private static final Logger logger = Logger.getLogger(KeycloakSmsMobilenumberRequiredActionFactory.class);
     private static final KeycloakSmsMobilenumberRequiredAction SINGLETON = new KeycloakSmsMobilenumberRequiredAction();
 
-    public RequiredActionProvider create(KeycloakSession session) {
+    @Override
+    public RequiredActionProvider create(final KeycloakSession session) {
         logger.debug("create called ...");
         return SINGLETON;
     }
 
+    @Override
     public String getId() {
         logger.debug("getId called ... returning " + KeycloakSmsMobilenumberRequiredAction.PROVIDER_ID);
         return KeycloakSmsMobilenumberRequiredAction.PROVIDER_ID;
     }
 
+    @Override
     public String getDisplayText() {
         logger.debug("getDisplayText called ...");
         return "Update Mobile Number";
     }
 
-    public void init(Config.Scope config) {
+    @Override
+    public void init(final Config.Scope config) {
         logger.debug("init called ...");
     }
 
-    public void postInit(KeycloakSessionFactory factory) {
+    @Override
+    public void postInit(final KeycloakSessionFactory factory) {
         logger.debug("postInit called ...");
     }
 
+    @Override
     public void close() {
         logger.debug("getId close ...");
     }

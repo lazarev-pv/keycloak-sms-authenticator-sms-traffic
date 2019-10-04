@@ -24,18 +24,18 @@ import java.util.stream.Stream;
  */
 public class KeycloakSmsAuthenticatorFactory implements AuthenticatorFactory, ConfigurableAuthenticatorFactory {
 
-    public static final String PROVIDER_ID = "sms-authentication";
+    private static final String PROVIDER_ID = "sms-authentication";
 
-    private static Logger logger = Logger.getLogger(KeycloakSmsAuthenticatorFactory.class);
+    private static final Logger logger = Logger.getLogger(KeycloakSmsAuthenticatorFactory.class);
     private static final KeycloakSmsAuthenticator SINGLETON = new KeycloakSmsAuthenticator();
 
 
-    public static final AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {
+    private static final AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {
             AuthenticationExecutionModel.Requirement.REQUIRED,
             AuthenticationExecutionModel.Requirement.OPTIONAL,
             AuthenticationExecutionModel.Requirement.DISABLED};
 
-    private static final List<ProviderConfigProperty> configProperties = new ArrayList<ProviderConfigProperty>();
+    private static final List<ProviderConfigProperty> configProperties = new ArrayList<>();
 
     static {
         ProviderConfigProperty property;
@@ -119,61 +119,73 @@ public class KeycloakSmsAuthenticatorFactory implements AuthenticatorFactory, Co
 
     }
 
+    @Override
     public String getId() {
         logger.debug("getId called ... returning " + PROVIDER_ID);
         return PROVIDER_ID;
     }
 
-    public Authenticator create(KeycloakSession session) {
+    @Override
+    public Authenticator create(final KeycloakSession session) {
         logger.debug("create called ... returning " + SINGLETON);
         return SINGLETON;
     }
 
 
+    @Override
     public AuthenticationExecutionModel.Requirement[] getRequirementChoices() {
-        logger.debug("getRequirementChoices called ... returning " + REQUIREMENT_CHOICES);
+        logger.debug("getRequirementChoices called ... returning {}", REQUIREMENT_CHOICES);
         return REQUIREMENT_CHOICES;
     }
 
+    @Override
     public boolean isUserSetupAllowed() {
         logger.debug("isUserSetupAllowed called ... returning true");
         return true;
     }
 
+    @Override
     public boolean isConfigurable() {
         logger.debug("isConfigurable called ... returning true");
         return true;
     }
 
+    @Override
     public String getHelpText() {
         logger.debug("getHelpText called ...");
         return "Validates an OTP sent by SMS.";
     }
 
+    @Override
     public String getDisplayType() {
-        String result = "SMS Authentication";
+        final String result = "SMS Authentication";
         logger.debug("getDisplayType called ... returning " + result);
         return result;
     }
 
+    @Override
     public String getReferenceCategory() {
         logger.debug("getReferenceCategory called ... returning sms-auth-code");
         return "sms-auth-code";
     }
 
+    @Override
     public List<ProviderConfigProperty> getConfigProperties() {
         logger.debug("getConfigProperties called ... returning " + configProperties);
         return configProperties;
     }
 
-    public void init(Config.Scope config) {
+    @Override
+    public void init(final Config.Scope config) {
         logger.debug("init called ... config.scope = " + config);
     }
 
-    public void postInit(KeycloakSessionFactory factory) {
+    @Override
+    public void postInit(final KeycloakSessionFactory factory) {
         logger.debug("postInit called ... factory = " + factory);
     }
 
+    @Override
     public void close() {
         logger.debug("close called ...");
     }

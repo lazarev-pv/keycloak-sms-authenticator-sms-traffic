@@ -1,5 +1,7 @@
 # keycloak-sms-authenticator-sns
 
+## Installation
+
 To install the SMS Authenticator one has to:
 
 * Add the jar to the Keycloak server:
@@ -38,3 +40,8 @@ Malys contributions (for [Lyra Network](https://www.lyra-network.com/))
 * Refactoring
 * Template cleaning
 * Documentation
+
+## Development
+
+* If you developing using Intellij Idea, 
+you should install inspections.xml as inspections and code_style.xml as code style

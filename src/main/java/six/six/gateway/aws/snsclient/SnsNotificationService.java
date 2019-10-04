@@ -14,13 +14,14 @@ public class SnsNotificationService implements SMSService {
 
     //TODO Implement proxy
 
-    public boolean send(String phoneNumber, String message, String clientToken, String clientSecret) {
-        Map<String, MessageAttributeValue> smsAttributes = new HashMap<String, MessageAttributeValue>();
+    @Override
+    public boolean send(final String phoneNumber, final String message, final String clientToken, final String clientSecret) {
+        final Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
         smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue()
                 .withStringValue("HomeOffice")
                 .withDataType("String"));
 
-        String id= SnsClientFactory.getSnsClient(clientToken, clientSecret).publish(new PublishRequest()
+        final String id= SnsClientFactory.getSnsClient(clientToken, clientSecret).publish(new PublishRequest()
                 .withMessage(message)
                 .withPhoneNumber(phoneNumber)
                 .withMessageAttributes(smsAttributes)).getMessageId();

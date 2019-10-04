@@ -23,32 +23,38 @@ public class KeycloakSmsAuthenticatorCredentialProvider implements CredentialPro
 
     private final KeycloakSession session;
 
-    public KeycloakSmsAuthenticatorCredentialProvider(KeycloakSession session) {
+    KeycloakSmsAuthenticatorCredentialProvider(final KeycloakSession session) {
         this.session = session;
     }
 
-    private CredentialModel getSecret(RealmModel realm, UserModel user) {
+    private CredentialModel getSecret(final RealmModel realm, final UserModel user) {
         CredentialModel secret = null;
         if (user instanceof CachedUserModel) {
-            CachedUserModel cached = (CachedUserModel) user;
+            final CachedUserModel cached = (CachedUserModel) user;
             secret = (CredentialModel) cached.getCachedWith().get(CACHE_KEY);
 
         } else {
-            List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
-            if (!creds.isEmpty()) secret = creds.get(0);
+            final List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
+            if (!creds.isEmpty()) {
+                secret = creds.get(0);
+            }
         }
         return secret;
     }
 
 
     @Override
-    public boolean updateCredential(RealmModel realm, UserModel user, CredentialInput input) {
-        if (!KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(input.getType())) return false;
-        if (!(input instanceof UserCredentialModel)) return false;
-        UserCredentialModel credInput = (UserCredentialModel) input;
-        List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
+    public boolean updateCredential(final RealmModel realm, final UserModel user, final CredentialInput input) {
+        if (!KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(input.getType())) {
+            return false;
+        }
+        if (!(input instanceof UserCredentialModel)) {
+            return false;
+        }
+        final UserCredentialModel credInput = (UserCredentialModel) input;
+        final List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
         if (creds.isEmpty()) {
-            CredentialModel secret = new CredentialModel();
+            final CredentialModel secret = new CredentialModel();
             secret.setType(KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
             secret.setValue(credInput.getValue());
             secret.setCreatedDate(Time.currentTimeMillis());
@@ -62,48 +68,54 @@ public class KeycloakSmsAuthenticatorCredentialProvider implements CredentialPro
     }
 
     @Override
-    public void disableCredentialType(RealmModel realm, UserModel user, String credentialType) {
-        if (!KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(credentialType)) return;
+    public void disableCredentialType(final RealmModel realm, final UserModel user, final String credentialType) {
+        if (!KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(credentialType)) {
+            return;
+        }
         session.userCredentialManager().disableCredentialType(realm, user, credentialType);
         session.userCache().evict(realm, user);
 
     }
 
     @Override
-    public Set<String> getDisableableCredentialTypes(RealmModel realm, UserModel user) {
+    public Set<String> getDisableableCredentialTypes(final RealmModel realm, final UserModel user) {
         if (!session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE).isEmpty()) {
-            Set<String> set = new HashSet<>();
+            final Set<String> set = new HashSet<>();
             set.add(KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
             return set;
         } else {
-            return Collections.<String>emptySet();
+            return Collections.emptySet();
         }
 
     }
 
     @Override
-    public boolean supportsCredentialType(String credentialType) {
+    public boolean supportsCredentialType(final String credentialType) {
         return KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(credentialType);
     }
 
     @Override
-    public boolean isConfiguredFor(RealmModel realm, UserModel user, String credentialType) {
+    public boolean isConfiguredFor(final RealmModel realm, final UserModel user, final String credentialType) {
         return KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(credentialType) && getSecret(realm, user) != null;
     }
 
     @Override
-    public boolean isValid(RealmModel realm, UserModel user, CredentialInput input) {
-        if (!KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(input.getType())) return false;
-        if (!(input instanceof UserCredentialModel)) return false;
+    public boolean isValid(final RealmModel realm, final UserModel user, final CredentialInput input) {
+        if (!KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE.equals(input.getType())) {
+            return false;
+        }
+        if (!(input instanceof UserCredentialModel)) {
+            return false;
+        }
 
-        String secret = getSecret(realm, user).getValue();
+        final String secret = getSecret(realm, user).getValue();
 
         return secret != null && ((UserCredentialModel) input).getValue().equals(secret);
     }
 
     @Override
-    public void onCache(RealmModel realm, CachedUserModel user, UserModel delegate) {
-        List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
+    public void onCache(final RealmModel realm, final CachedUserModel user, final UserModel delegate) {
+        final List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, KeycloakSmsConstants.USR_CRED_MDL_SMS_CODE);
         if (!creds.isEmpty()) {
             user.getCachedWith().put(CACHE_KEY, creds.get(0));
         }
